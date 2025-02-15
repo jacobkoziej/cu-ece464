@@ -28,7 +28,13 @@
           in
           {
             packages = with pkgs; [
+              mdformat
               pre-commit
+              shfmt
+              toml-sort
+              treefmt2
+              yamlfmt
+              yamllint
             ];
 
             shellHook = ''
