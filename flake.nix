@@ -31,6 +31,7 @@
               mdformat
               pre-commit
               shfmt
+              sqlite
               toml-sort
               treefmt2
               yamlfmt
