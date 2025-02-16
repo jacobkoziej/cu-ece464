@@ -23,6 +23,12 @@ includes = [
   ".envrc",
 ]
 
+[formatter.sleek]
+command = "sleek"
+includes = [
+  "*.sql",
+]
+
 [formatter.toml-sort]
 command = "toml-sort"
 includes = [
