@@ -33,6 +33,7 @@
               shfmt
               sleek
               sqlite
+              sqlite-web
               toml-sort
               treefmt2
               yamlfmt
