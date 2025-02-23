@@ -39,6 +39,7 @@
               mdformat
               pre-commit
               python3-pkgs
+              ruff
               shfmt
               sleek
               sqlite
