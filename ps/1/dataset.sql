@@ -24,6 +24,13 @@ CREATE TABLE boats(
     length int
 );
 
+CREATE TABLE condition(
+    bid int,
+    condition int,
+    inspection_time int,
+    PRIMARY KEY (bid, condition, inspection_time)
+);
+
 INSERT INTO
     sailors
 VALUES
