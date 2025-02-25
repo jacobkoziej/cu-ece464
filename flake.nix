@@ -22,6 +22,7 @@
 
         python3-pkgs = python3.withPackages (
           ps: with ps; [
+            pytest
             sqlalchemy
           ]
         );
