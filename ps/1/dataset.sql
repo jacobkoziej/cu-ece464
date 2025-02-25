@@ -31,6 +31,27 @@ CREATE TABLE condition(
     PRIMARY KEY (bid, condition, inspection_time)
 );
 
+CREATE VIEW sea_ready AS
+SELECT
+    b.bid AS bid,
+    b.bname AS name
+FROM
+    boats AS b,
+    (
+        SELECT
+            bid,
+            condition
+        FROM
+            condition
+        GROUP BY
+            bid
+        ORDER BY
+            max(inspection_time)
+    ) AS c
+WHERE
+    b.bid == c.bid
+    AND c.condition < 3;
+
 INSERT INTO
     sailors
 VALUES
