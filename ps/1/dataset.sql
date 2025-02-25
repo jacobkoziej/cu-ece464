@@ -340,3 +340,37 @@ INSERT INTO
     boats
 VALUES
     (112, 'Sooney', 'red', 28);
+
+INSERT INTO
+    condition
+VALUES
+    (101, 1, unixepoch('1998-10-11')),
+    (101, 2, unixepoch('1998-09-06')),
+    (102, 1, unixepoch('1998-10-11')),
+    (102, 2, unixepoch('1998-11-11')),
+    (102, 3, unixepoch('1998-09-09')),
+    (103, 1, unixepoch('1998-08-11')),
+    (103, 2, unixepoch('1998-11-07')),
+    (103, 3, unixepoch('1998-09-09')),
+    (104, 1, unixepoch('1998-10-11')),
+    (104, 2, unixepoch('1998-10-12')),
+    (104, 3, unixepoch('1998-08-13')),
+    (104, 4, unixepoch('1998-07-18')),
+    (104, 5, unixepoch('1998-11-13')),
+    (105, 3, unixepoch('1998-07-12')),
+    (105, 3, unixepoch('1998-11-12')),
+    (105, 4, unixepoch('1998-11-07')),
+    (106, 2, unixepoch('1998-11-13')),
+    (106, 3, unixepoch('1998-09-06')),
+    (106, 4, unixepoch('1998-09-10')),
+    (107, 2, unixepoch('1998-09-11')),
+    (108, 2, unixepoch('1998-10-20')),
+    (109, 2, unixepoch('1998-10-30')),
+    (109, 3, unixepoch('1998-08-16')),
+    (109, 4, unixepoch('1998-07-19')),
+    (109, 5, unixepoch('1998-11-12')),
+    (110, 2, unixepoch('1998-11-07')),
+    (110, 3, unixepoch('1998-11-13')),
+    (110, 4, unixepoch('1998-09-08')),
+    (111, 2, unixepoch('1998-09-09')),
+    (112, 2, unixepoch('1998-09-10'));
