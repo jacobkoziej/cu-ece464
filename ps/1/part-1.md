@@ -150,13 +150,13 @@ SELECT
 FROM
     sailors AS s
 WHERE
-    s.sid IN (
+    s.sid NOT IN (
         SELECT
             r.sid
         FROM
             reserves AS r
         WHERE
-            r.bid NOT IN (
+            r.bid IN (
                 SELECT
                     b.bid
                 FROM
@@ -171,14 +171,14 @@ WHERE
 +----+---------+
 | id |  name   |
 +----+---------+
-| 22 | dusting |
-| 31 | lubber  |
-| 59 | stum    |
-| 60 | jit     |
-| 64 | horatio |
+| 29 | brutus  |
+| 32 | andy    |
+| 58 | rusty   |
+| 71 | zorba   |
 | 74 | horatio |
-| 88 | dan     |
-| 89 | dye     |
+| 85 | art     |
+| 95 | bob     |
+| 60 | jit     |
 | 90 | vin     |
 +----+---------+
 ```

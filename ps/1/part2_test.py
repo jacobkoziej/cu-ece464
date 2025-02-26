@@ -142,22 +142,22 @@ def test_5(session: Session) -> None:
     subquery_boats = session.query(Boat.bid).filter(Boat.color == "red")
 
     subquery_reserves = session.query(Reservation.sid).filter(
-        Reservation.bid.notin_(subquery_boats)
+        Reservation.bid.in_(subquery_boats)
     )
 
     query = session.query(Sailor.sid, Sailor.sname).filter(
-        Sailor.sid.in_(subquery_reserves)
+        Sailor.sid.notin_(subquery_reserves)
     )
 
     expected = [
-        (22, "dusting"),
-        (31, "lubber"),
-        (59, "stum"),
-        (60, "jit"),
-        (64, "horatio"),
+        (29, "brutus"),
+        (32, "andy"),
+        (58, "rusty"),
+        (71, "zorba"),
         (74, "horatio"),
-        (88, "dan"),
-        (89, "dye"),
+        (85, "art"),
+        (95, "bob"),
+        (60, "jit"),
         (90, "vin"),
     ]
 
