@@ -7,18 +7,14 @@ import pytest
 
 from os.path import dirname
 
-from sqlalchemy import (
-    create_engine,
-)
+from sqlalchemy import create_engine
 from sqlalchemy.sql.expression import (
     exists,
     func,
     not_,
     select,
 )
-from sqlalchemy.orm import (
-    Session,
-)
+from sqlalchemy.orm import Session
 
 from part2 import (
     Boat,
