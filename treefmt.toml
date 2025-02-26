@@ -69,5 +69,6 @@ excludes = [
   "*.gitignore",
   "*.lock",
   ".editorconfig",
+  ".gitattributes",
   "LICENSE.md",
 ]
