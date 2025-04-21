@@ -48,7 +48,7 @@
               sqlite
               sqlite-web
               toml-sort
-              treefmt2
+              treefmt
               yamlfmt
               yamllint
             ];
