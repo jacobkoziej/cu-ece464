@@ -10,6 +10,8 @@ import yaml
 from argparse import ArgumentParser
 from pathlib import Path
 
+from .config import Config
+
 
 def main() -> None:
     parser = ArgumentParser(
@@ -29,7 +31,7 @@ def main() -> None:
     with open(args.config) as fp:
         config = yaml.safe_load(fp)
 
-    _ = config
+    config = Config.model_validate(config)
 
 
 if __name__ == "__main__":
