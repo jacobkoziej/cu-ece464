@@ -5,8 +5,31 @@
 
 import sys
 
+import yaml
 
-def main() -> None: ...
+from argparse import ArgumentParser
+from pathlib import Path
+
+
+def main() -> None:
+    parser = ArgumentParser(
+        description="jankins server",
+    )
+
+    parser.add_argument(
+        "--config",
+        default="config.yaml",
+        help="checkpoint path",
+        metavar="config.yaml",
+        type=Path,
+    )
+
+    args = parser.parse_args()
+
+    with open(args.config) as fp:
+        config = yaml.safe_load(fp)
+
+    _ = config
 
 
 if __name__ == "__main__":
