@@ -24,6 +24,7 @@
           ps: with ps; [
             beautifulsoup4
             pytest
+            pyyaml
             requests
             sqlalchemy
           ]
