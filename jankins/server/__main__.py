@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MPL-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # __main__.py -- main
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
