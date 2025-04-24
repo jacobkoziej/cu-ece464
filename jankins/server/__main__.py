@@ -12,6 +12,8 @@ from pathlib import Path
 
 from .config import Config
 
+from loguru import logger
+
 
 def main() -> None:
     parser = ArgumentParser(
@@ -29,6 +31,8 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.config.is_file():
+        logger.info(f"reading config from `{args.config.resolve()}`")
+
         with open(args.config) as fp:
             config = yaml.safe_load(fp)
 
