@@ -8,7 +8,11 @@ from . import (
     connection,
 )
 
+from loguru import logger as _logger
+
 __all__ = [
     "config",
     "connection",
 ]
+
+_logger.disable("server")

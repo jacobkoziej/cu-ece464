@@ -35,6 +35,15 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    logger.remove()
+    logger.add(
+        sys.stderr,
+        format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS Z}</green> | "
+        "<blue>{process}:{thread}</blue> | "
+        "<level>{level: <8}</level> | "
+        "<level>{message}</level>",
+    )
+
     if args.config.is_file():
         logger.info(f"reading config from `{args.config.resolve()}`")
 
@@ -55,7 +64,7 @@ def main() -> None:
         try:
             server_thread.start()
             logger.success(
-                f"server thread started with thread id {server_thread.native_id}"
+                f"server thread started with id {server_thread.ident}"
             )
 
             server_thread.join()
