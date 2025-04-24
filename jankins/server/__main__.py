@@ -20,7 +20,7 @@ def main() -> None:
 
     parser.add_argument(
         "--config",
-        default="config.yaml",
+        default="",
         help="checkpoint path",
         metavar="config.yaml",
         type=Path,
@@ -28,8 +28,12 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    with open(args.config) as fp:
-        config = yaml.safe_load(fp)
+    if args.config.is_file():
+        with open(args.config) as fp:
+            config = yaml.safe_load(fp)
+
+    else:
+        config = {}
 
     config = Config.model_validate(config)
 
