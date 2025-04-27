@@ -25,6 +25,7 @@
             beautifulsoup4
             loguru
             msgpack
+            platformdirs
             pydantic
             pytest
             pyyaml
