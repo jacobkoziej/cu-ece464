@@ -24,6 +24,7 @@
           ps: with ps; [
             beautifulsoup4
             loguru
+            msgpack
             pydantic
             pytest
             pyyaml
