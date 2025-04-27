@@ -8,9 +8,14 @@ from socketserver import (
     TCPServer,
     ThreadingMixIn,
 )
+from typing import Optional
+
+from .config import Config
 
 
 class Handler(BaseRequestHandler):
+    config: Optional[Config]
+
     def setup(self) -> None: ...
 
     def handle(self) -> None: ...

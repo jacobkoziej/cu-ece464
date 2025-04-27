@@ -53,7 +53,7 @@ def main() -> None:
     else:
         config = {}
 
-    config = Config.model_validate(config)
+    Handler.config = config = Config.model_validate(config)
 
     logger.info(f"starting server on port {config.port}")
 
