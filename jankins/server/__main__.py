@@ -16,8 +16,10 @@ from .connection import (
     Handler,
     Server,
 )
+from .db import Database
 
 from loguru import logger
+from platformdirs import user_data_dir
 
 
 def main() -> None:
@@ -54,6 +56,19 @@ def main() -> None:
         config = {}
 
     Handler.config = config = Config.model_validate(config)
+
+    if config.database_path is None:
+        config.database_path = (
+            Path(user_data_dir("jankins", ensure_exists=True))
+            / "database.sqlite"
+        )
+
+    config.database_path = Path(config.database_path)
+
+    logger.info(f"using database at `{config.database_path.resolve()}`")
+
+    # create tables if they don't exist
+    _ = Database(config.database_path, create_tables=True)
 
     logger.info(f"starting server on port {config.port}")
 
