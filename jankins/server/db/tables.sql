@@ -25,3 +25,13 @@ VALUES
     ('PENDING'),
     ('RUNNING'),
     ('TIMEOUT');
+
+CREATE TABLE IF NOT EXISTS jobs(
+    jid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    owner INTEGER NOT NULL,
+    state INTEGER NOT NULL,
+    exit_code INTEGER,
+    artifact_path TEXT,
+    FOREIGN KEY(owner) REFERENCES users(uid),
+    FOREIGN KEY(state) REFERENCES job_state(value)
+);
