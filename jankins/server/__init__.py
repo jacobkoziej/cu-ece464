@@ -6,6 +6,7 @@
 from . import (
     config,
     connection,
+    db,
 )
 
 from loguru import logger as _logger
@@ -13,6 +14,7 @@ from loguru import logger as _logger
 __all__ = [
     "config",
     "connection",
+    "db",
 ]
 
 _logger.disable("server")

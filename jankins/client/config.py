@@ -8,6 +8,6 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     username: str
-    password: str
+    passwd: str
     hostname: str = "localhost"
     port: int = 4640
