@@ -11,9 +11,12 @@ import yaml
 from argparse import ArgumentParser
 from pathlib import Path
 
-from platformdirs import user_config_dir
 from loguru import logger
+from msgpack import Packer
+from platformdirs import user_config_dir
 
+from ..message import Authenticate
+from ..serial import encode
 from .config import Config
 
 
@@ -59,6 +62,17 @@ def main() -> None:
     logger.debug(f"connecting to {address}")
 
     sock = socket.create_connection(address)
+
+    packer = Packer(default=encode)
+
+    auth = Authenticate(
+        username=config.username,
+        passwd=config.passwd,
+    )
+
+    logger.debug(f"authenticating as: {auth.username}")
+
+    sock.sendall(packer.pack(auth))
 
     sock.close()
 
