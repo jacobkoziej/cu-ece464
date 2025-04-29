@@ -7,6 +7,11 @@ import importlib.resources
 import sqlite3
 
 from os import PathLike
+from typing import Optional
+
+from ...message import (
+    Authenticate,
+)
 
 
 class Database:
@@ -35,3 +40,17 @@ class Database:
 
             self.connection.executescript(script)
             self.connection.commit()
+
+    def authenticate(self, auth: Authenticate) -> Optional[int]:
+        cursor = self.connection.cursor()
+
+        result = cursor.execute(
+            "SELECT uid FROM users WHERE username = :username AND passwd = :passwd",
+            auth.model_dump(),
+        )
+        self.connection.commit()
+
+        if uid := result.fetchone():
+            uid = uid[0]
+
+        return uid
