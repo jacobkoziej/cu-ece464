@@ -45,12 +45,12 @@ class Database:
         cursor = self.connection.cursor()
 
         result = cursor.execute(
-            "SELECT uid FROM users WHERE username = :username AND passwd = :passwd",
+            "SELECT id FROM users WHERE username = :username AND passwd = :passwd",
             auth.model_dump(),
         )
         self.connection.commit()
 
-        if uid := result.fetchone():
-            uid = uid[0]
+        if id := result.fetchone():
+            id = id[0]
 
-        return uid
+        return id

@@ -4,7 +4,7 @@
  * Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
  */
 CREATE TABLE IF NOT EXISTS users(
-    uid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     passwd TEXT NOT NULL
 );
@@ -27,11 +27,11 @@ VALUES
     ('TIMEOUT');
 
 CREATE TABLE IF NOT EXISTS jobs(
-    jid INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     owner INTEGER NOT NULL,
     state INTEGER NOT NULL,
     exit_code INTEGER,
     artifact_path TEXT,
-    FOREIGN KEY(owner) REFERENCES users(uid),
+    FOREIGN KEY(owner) REFERENCES users(id),
     FOREIGN KEY(state) REFERENCES job_state(value)
 );
