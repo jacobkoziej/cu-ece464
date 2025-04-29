@@ -44,6 +44,7 @@
           {
             packages = with pkgs; [
               black
+              litecli
               mdformat
               pre-commit
               python3-pkgs
