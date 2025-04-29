@@ -13,6 +13,7 @@ from typing import Optional
 from loguru import logger
 from msgpack import Unpacker
 
+from ..serial import decode
 from .config import Config
 
 
@@ -27,7 +28,7 @@ class Handler(BaseRequestHandler):
 
         logger.info(f"got connection: {sock.getpeername()}")
 
-        unpacker = Unpacker()
+        unpacker = Unpacker(object_hook=decode)
 
         while True:
             buf = sock.recv(config.recieve_bufsize)
