@@ -29,7 +29,7 @@ def main() -> None:
 
     parser.add_argument(
         "--config",
-        default="",
+        default=Path("config.yaml"),
         help="checkpoint path",
         metavar="config.yaml",
         type=Path,
