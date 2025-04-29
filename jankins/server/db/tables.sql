@@ -8,3 +8,20 @@ CREATE TABLE IF NOT EXISTS users(
     username TEXT NOT NULL UNIQUE,
     passwd TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS job_state(
+    value INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+);
+
+DELETE FROM
+    job_state;
+
+INSERT INTO
+    job_state(name)
+VALUES
+    ('CANCELED'),
+    ('COMPLETE'),
+    ('PENDING'),
+    ('RUNNING'),
+    ('TIMEOUT');
