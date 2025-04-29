@@ -6,11 +6,13 @@
 from . import (
     client,
     message,
+    serial,
     server,
 )
 
 __all__ = [
     "client",
     "message",
+    "serial",
     "server",
 ]
