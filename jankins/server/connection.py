@@ -10,6 +10,9 @@ from socketserver import (
 )
 from typing import Optional
 
+from loguru import logger
+from msgpack import Unpacker
+
 from .config import Config
 
 
@@ -18,7 +21,24 @@ class Handler(BaseRequestHandler):
 
     def setup(self) -> None: ...
 
-    def handle(self) -> None: ...
+    def handle(self) -> None:
+        sock = self.request
+        config = self.config
+
+        logger.info(f"got connection: {sock.getpeername()}")
+
+        unpacker = Unpacker()
+
+        while True:
+            buf = sock.recv(config.recieve_bufsize)
+
+            if not buf:
+                break
+
+            unpacker.feed(buf)
+
+            for msg in unpacker:
+                logger.info(msg)
 
     def finish(self) -> None: ...
 

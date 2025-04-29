@@ -8,3 +8,4 @@ from pydantic import BaseModel
 
 class Config(BaseModel):
     port: int = 4640
+    recieve_bufsize: int = 1024
