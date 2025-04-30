@@ -8,7 +8,10 @@ import socket
 from collections import deque
 from typing import Any
 
-from msgpack import Unpacker
+from msgpack import (
+    Packer,
+    Unpacker,
+)
 from pydantic import BaseModel
 
 from . import message
@@ -50,3 +53,10 @@ def rx(sock: socket.socket, bufsize: int = 1024) -> deque[Any]:
             msgs.append(msg)
 
     return msgs
+
+
+def tx(sock: socket.socket, objs: list[Any]) -> None:
+    packer = Packer(default=encode)
+
+    for obj in objs:
+        sock.sendall(packer.pack(obj))
