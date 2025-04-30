@@ -3,7 +3,6 @@
 # connection.py -- connection handler
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
 
-from collections import deque
 from socketserver import (
     BaseRequestHandler,
     TCPServer,
@@ -12,12 +11,11 @@ from socketserver import (
 from typing import Optional
 
 from loguru import logger
-from msgpack import Unpacker
 
 from ..message import (
     Authenticate,
 )
-from ..serial import decode
+from ..serial import rx
 from .config import Config
 from .db import Database
 
@@ -34,20 +32,7 @@ class Handler(BaseRequestHandler):
 
         logger.info(f"got connection: {sock.getpeername()}")
 
-        unpacker = Unpacker(object_hook=decode)
-
-        msgs = deque()
-
-        while True:
-            buf = sock.recv(config.recieve_bufsize)
-
-            if not buf:
-                break
-
-            unpacker.feed(buf)
-
-            for msg in unpacker:
-                msgs.append(msg)
+        msgs = rx(sock, config.recieve_bufsize)
 
         if not msgs:
             logger.warn("got no messages")

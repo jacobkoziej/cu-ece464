@@ -3,8 +3,12 @@
 # serial.py -- serial functions
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
 
+import socket
+
+from collections import deque
 from typing import Any
 
+from msgpack import Unpacker
 from pydantic import BaseModel
 
 from . import message
@@ -27,3 +31,22 @@ def encode(obj: Any) -> Any:
         }
 
     return obj
+
+
+def rx(sock: socket.socket, bufsize: int = 1024) -> deque[Any]:
+    msgs = deque()
+
+    unpacker = Unpacker(object_hook=decode)
+
+    while True:
+        buf = sock.recv(bufsize)
+
+        if not buf:
+            break
+
+        unpacker.feed(buf)
+
+        for msg in unpacker:
+            msgs.append(msg)
+
+    return msgs
