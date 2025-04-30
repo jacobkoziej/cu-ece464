@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS jobs(
     ACTION INTEGER NOT NULL,
     owner INTEGER NOT NULL,
     state INTEGER NOT NULL,
+    start_time INTEGER NOT NULL,
+    end_time INTEGER,
     exit_code INTEGER,
     artifact_path TEXT,
     FOREIGN KEY(ACTION) REFERENCES actions(id),
