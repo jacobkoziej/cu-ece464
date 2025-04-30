@@ -35,7 +35,7 @@ class Handler(BaseRequestHandler):
         msgs = rx(sock, config.recieve_bufsize)
 
         if not msgs:
-            logger.warn("got no messages")
+            logger.warning("got no messages")
             return
 
         auth = msgs.popleft()
