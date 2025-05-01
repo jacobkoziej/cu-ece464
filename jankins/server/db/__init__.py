@@ -93,3 +93,20 @@ class Database:
         self.connection.commit()
 
         return states
+
+    def pend_job(self, action_id: int) -> Optional[int]:
+        if not self.action_id_valid(action_id):
+            return None
+
+        states = self.job_states()
+
+        cursor = self.connection.cursor()
+
+        id = cursor.execute(
+            "INSERT INTO jobs(action, state) VALUES (?, ?) RETURNING id",
+            (action_id, states["PENDING"]),
+        ).fetchone()[0]
+
+        self.connection.commit()
+
+        return id
