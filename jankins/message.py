@@ -6,6 +6,11 @@
 from pydantic import BaseModel
 
 
+class Action(BaseModel):
+    name: str
+    command: str
+
+
 class Authenticate(BaseModel):
     username: str
     passwd: str
