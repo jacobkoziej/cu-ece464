@@ -10,6 +10,7 @@ from os import PathLike
 from typing import Optional
 
 from ...message import (
+    Action,
     Authenticate,
 )
 
@@ -40,6 +41,16 @@ class Database:
 
             self.connection.executescript(script)
             self.connection.commit()
+
+    def add_action(self, action: Action) -> None:
+        cursor = self.connection.cursor()
+
+        cursor.execute(
+            "INSERT INTO actions(name, command) VALUES (:name, :command)",
+            action.model_dump(),
+        )
+
+        self.connection.commit()
 
     def authenticate(self, auth: Authenticate) -> Optional[int]:
         cursor = self.connection.cursor()
