@@ -14,3 +14,7 @@ class Action(BaseModel):
 class Authenticate(BaseModel):
     username: str
     passwd: str
+
+
+class Success(BaseModel):
+    success: bool
