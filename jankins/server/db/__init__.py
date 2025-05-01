@@ -58,15 +58,17 @@ class Database:
 
         return active
 
-    def add_action(self, action: Action) -> None:
+    def add_action(self, action: Action) -> int:
         cursor = self.connection.cursor()
 
-        cursor.execute(
-            "INSERT INTO actions(name, command) VALUES (:name, :command)",
+        id = cursor.execute(
+            "INSERT INTO actions(name, command) VALUES (:name, :command) RETURNING id",
             action.model_dump(),
-        )
+        ).fetchone()[0]
 
         self.connection.commit()
+
+        return id
 
     def authenticate(self, auth: Authenticate) -> Optional[int]:
         cursor = self.connection.cursor()

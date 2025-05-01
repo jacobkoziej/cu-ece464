@@ -3,6 +3,8 @@
 # connection.py -- connection handler
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
 
+import socket
+
 from socketserver import (
     BaseRequestHandler,
     TCPServer,
@@ -14,8 +16,11 @@ from loguru import logger
 
 from ..message import (
     Action,
+    ActionResponse,
     Authenticate,
-    Success,
+    GenericFailure,
+    Queue,
+    QueueResponse,
 )
 from ..serial import (
     rx,
@@ -28,20 +33,47 @@ from .db import Database
 class Handler(BaseRequestHandler):
     config: Optional[Config]
 
-    def _handle_Action(self, uid: int, action: Action) -> bool:
+    def _handle_Action(self, uid: int, action: Action) -> None:
+        response = ActionResponse()
+
         try:
-            self.db.add_action(action)
+            response.action_id = self.db.add_action(action)
+
+            logger.success(f"added action: {action.name}")
 
         except Exception:
-            logger.error(f"failed to add action: {action.name}")
-            return False
+            response.error = f"failed to add action: {action.name}"
 
-        logger.success(f"added action: {action.name}")
+            logger.error(response.error)
 
-        return True
+        finally:
+            tx(self.request, [response])
 
-    def _return_success(self, success: bool) -> None:
-        tx(self.request, [Success(success=success)])
+    def _handle_Queue(self, uid: int, queue: Queue) -> None:
+        response = QueueResponse()
+
+        try:
+            response.job_id = self.db.pend_job(queue.action_id)
+
+            logger.success(f"queued action as job: {response.job_id}")
+
+        except Exception:
+            response.error = "failed to queue action"
+
+            logger.error(f"{response.error}: {queue.action_id}")
+
+        finally:
+            tx(self.request, [response])
+
+    def _return_failure(self, error: Optional[str] = None) -> None:
+        response = GenericFailure(error=error)
+
+        if error is None:
+            error = "unspecified generic failure"
+
+        logger.error(error)
+
+        tx(self.request, [response])
 
     def setup(self) -> None:
         self.db = Database(self.config.database_path)
@@ -53,10 +85,10 @@ class Handler(BaseRequestHandler):
         logger.info(f"got connection: {sock.getpeername()}")
 
         msgs = rx(sock, config.recieve_bufsize)
+        sock.shutdown(socket.SHUT_RD)
 
         if not msgs:
-            logger.warning("got no messages")
-            self._return_success(False)
+            self._failure("got no messages")
             return
 
         auth = msgs.popleft()
@@ -64,8 +96,7 @@ class Handler(BaseRequestHandler):
         if not isinstance(auth, Authenticate) or not (
             uid := self.db.authenticate(auth)
         ):
-            logger.warning(f"authentication failed for user: {auth.username}")
-            self._return_success(False)
+            self._failure(f"authentication failed for user: {auth.username}")
             return
 
         logger.success(f"authenticated user: {auth.username}")
@@ -78,13 +109,10 @@ class Handler(BaseRequestHandler):
         )
 
         if sub_command_handler is None:
-            logger.error("unknown sub-command encountered")
-            self._return_success(False)
+            self._failure("unknown sub-command encountered")
             return
 
-        success = sub_command_handler(uid, sub_command)
-
-        self._return_success(success)
+        sub_command_handler(uid, sub_command)
 
     def finish(self) -> None:
         del self.db
