@@ -59,9 +59,10 @@ class Database:
             "SELECT id FROM users WHERE username = :username AND passwd = :passwd",
             auth.model_dump(),
         )
-        self.connection.commit()
 
         if id := result.fetchone():
             id = id[0]
+
+        self.connection.commit()
 
         return id
