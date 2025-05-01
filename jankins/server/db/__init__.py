@@ -42,6 +42,22 @@ class Database:
             self.connection.executescript(script)
             self.connection.commit()
 
+    def action_id_valid(self, action_id: int) -> bool:
+        cursor = self.connection.cursor()
+
+        result = cursor.execute(
+            "SELECT active FROM actions WHERE id = ?", (action_id,)
+        ).fetchone()
+
+        self.connection.commit()
+
+        if result is None:
+            return False
+
+        active = bool(result[0])
+
+        return active
+
     def add_action(self, action: Action) -> None:
         cursor = self.connection.cursor()
 
