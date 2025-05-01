@@ -36,9 +36,9 @@ VALUES
 CREATE TABLE IF NOT EXISTS jobs(
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     ACTION INTEGER NOT NULL,
-    owner INTEGER NOT NULL,
+    owner INTEGER,
     state INTEGER NOT NULL,
-    start_time INTEGER NOT NULL,
+    start_time INTEGER,
     end_time INTEGER,
     exit_code INTEGER,
     artifact_path TEXT,
