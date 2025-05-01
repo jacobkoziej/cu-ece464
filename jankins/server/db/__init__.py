@@ -66,3 +66,14 @@ class Database:
         self.connection.commit()
 
         return id
+
+    def job_states(self) -> dict[str, int]:
+        cursor = self.connection.cursor()
+
+        result = cursor.execute("SELECT name, value FROM job_state")
+
+        states = dict(result.fetchall())
+
+        self.connection.commit()
+
+        return states
