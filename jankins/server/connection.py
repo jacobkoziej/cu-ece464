@@ -55,4 +55,4 @@ class Handler(BaseRequestHandler):
 
 
 class Server(ThreadingMixIn, TCPServer):
-    pass
+    allow_reuse_address = True
