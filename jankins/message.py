@@ -27,6 +27,22 @@ class GenericFailure(BaseModel):
     reason: Optional[str] = None
 
 
+class JobEnd(BaseModel):
+    job_id: int
+    return_code: int
+    artifact: bytes
+
+
+class JobStart(BaseModel):
+    job_id: Optional[int]
+
+
+class JobStartResponse(BaseModel):
+    job_id: Optional[int] = None
+    command: Optional[str] = None
+    error: Optional[str] = None
+
+
 class Queue(BaseModel):
     action_id: int
 

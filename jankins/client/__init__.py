@@ -5,12 +5,14 @@
 
 from . import (
     config,
+    work,
 )
 
 from loguru import logger as _logger
 
 __all__ = [
     "config",
+    "work",
 ]
 
 _logger.disable("client")
