@@ -33,6 +33,11 @@ class JobEnd(BaseModel):
     artifact: bytes
 
 
+class JobEndResponse(BaseModel):
+    complete: Optional[bool] = None
+    error: Optional[str] = None
+
+
 class JobStart(BaseModel):
     job_id: Optional[int]
 

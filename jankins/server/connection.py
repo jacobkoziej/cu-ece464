@@ -19,6 +19,8 @@ from ..message import (
     ActionResponse,
     Authenticate,
     GenericFailure,
+    JobEnd,
+    JobEndResponse,
     JobStart,
     JobStartResponse,
     Queue,
@@ -61,6 +63,28 @@ class Handler(BaseRequestHandler):
         finally:
             tx(self.request, [response])
 
+    def _handle_JobEnd(self, uid: int, job_end: JobEnd) -> None:
+        response = JobEndResponse()
+
+        try:
+            response.complete = self.db.complete_job(
+                job_end.job_id,
+                job_end.return_code,
+            )
+
+            logger.success(f"ended job: {job_end.job_id}")
+
+        except Exception:
+            response.error = "failed to end job"
+
+            logger.error(f"{response.error}: {job_end.job_id}")
+
+        finally:
+            tx(self.request, [response])
+
+            with open(self.job_dir / f"{job_end.job_id}.zip", "wb") as fp:
+                fp.write(job_end.artifact)
+
     def _handle_JobStart(self, uid: int, job_start: JobStart) -> None:
         response = JobStartResponse()
 
@@ -102,6 +126,9 @@ class Handler(BaseRequestHandler):
 
     def setup(self) -> None:
         self.db = Database(self.config.user_data_path / "database.sqlite")
+
+        self.job_dir = self.config.user_data_path / "job"
+        self.job_dir.mkdir(parents=True, exist_ok=True)
 
     def handle(self) -> None:
         sock = self.request
