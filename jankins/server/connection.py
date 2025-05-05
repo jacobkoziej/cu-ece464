@@ -19,6 +19,8 @@ from ..message import (
     ActionResponse,
     Authenticate,
     GenericFailure,
+    JobStart,
+    JobStartResponse,
     Queue,
     QueueResponse,
 )
@@ -55,6 +57,29 @@ class Handler(BaseRequestHandler):
             response.error = f"failed to add action: {action.name}"
 
             logger.error(response.error)
+
+        finally:
+            tx(self.request, [response])
+
+    def _handle_JobStart(self, uid: int, job_start: JobStart) -> None:
+        response = JobStartResponse()
+
+        try:
+            response.job_id, action_id = self.db.delegate_job(
+                uid,
+                job_start.job_id,
+            )
+            response.command = self.db.action_id_to_command(action_id)
+
+            if response.command is None:
+                raise KeyError
+
+            logger.success(f"started job: {response.job_id}")
+
+        except Exception:
+            response.error = "failed to start job"
+
+            logger.error(f"{response.error}: {job_start.job_id}")
 
         finally:
             tx(self.request, [response])
