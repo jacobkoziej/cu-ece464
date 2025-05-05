@@ -33,6 +33,16 @@ from .db import Database
 class Handler(BaseRequestHandler):
     config: Optional[Config]
 
+    def _failure(self, error: Optional[str] = None) -> None:
+        response = GenericFailure(error=error)
+
+        if error is None:
+            error = "unspecified generic failure"
+
+        logger.error(error)
+
+        tx(self.request, [response])
+
     def _handle_Action(self, uid: int, action: Action) -> None:
         response = ActionResponse()
 
@@ -64,16 +74,6 @@ class Handler(BaseRequestHandler):
 
         finally:
             tx(self.request, [response])
-
-    def _return_failure(self, error: Optional[str] = None) -> None:
-        response = GenericFailure(error=error)
-
-        if error is None:
-            error = "unspecified generic failure"
-
-        logger.error(error)
-
-        tx(self.request, [response])
 
     def setup(self) -> None:
         self.db = Database(self.config.user_data_path / "database.sqlite")
