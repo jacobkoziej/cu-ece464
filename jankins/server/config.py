@@ -10,6 +10,6 @@ from pydantic import BaseModel
 
 
 class Config(BaseModel):
-    database_path: Optional[PathLike] = None
+    user_data_path: Optional[PathLike] = None
     port: int = 4640
     recieve_bufsize: int = 1024

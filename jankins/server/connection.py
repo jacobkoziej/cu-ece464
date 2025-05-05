@@ -76,7 +76,7 @@ class Handler(BaseRequestHandler):
         tx(self.request, [response])
 
     def setup(self) -> None:
-        self.db = Database(self.config.database_path)
+        self.db = Database(self.config.user_data_path / "database.sqlite")
 
     def handle(self) -> None:
         sock = self.request

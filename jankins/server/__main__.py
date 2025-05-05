@@ -57,18 +57,19 @@ def main() -> None:
 
     Handler.config = config = Config.model_validate(config)
 
-    if config.database_path is None:
-        config.database_path = (
-            Path(user_data_dir("jankins", ensure_exists=True))
-            / "database.sqlite"
+    if config.user_data_path is None:
+        config.user_data_path = Path(
+            user_data_dir("jankins", ensure_exists=True)
         )
 
-    config.database_path = Path(config.database_path)
+    config.user_data_path = Path(config.user_data_path)
 
-    logger.info(f"using database at `{config.database_path.resolve()}`")
+    database_path = config.user_data_path / "database.sqlite"
+
+    logger.info(f"using database at `{database_path.resolve()}`")
 
     # create tables if they don't exist
-    _ = Database(config.database_path, create_tables=True)
+    _ = Database(database_path, create_tables=True)
 
     logger.info(f"starting server on port {config.port}")
 
