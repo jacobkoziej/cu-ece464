@@ -100,6 +100,37 @@ class Database:
 
         return id
 
+    def complete_job(
+        self,
+        job_id: int,
+        exit_code: int,
+    ) -> bool:
+        states = self.job_states()
+
+        cursor = self.connection.cursor()
+
+        parameters = {
+            "id": job_id,
+            "end_time": time_ns(),
+            "state": states["COMPLETE"],
+        }
+
+        try:
+            cursor.execute(
+                "UPDATE jobs "
+                "SET end_time = :end_time, state = :state "
+                "WHERE id = :id",
+                parameters,
+            )
+
+        except Exception:
+            return False
+
+        finally:
+            self.connection.commit()
+
+        return True
+
     def job_states(self) -> dict[str, int]:
         cursor = self.connection.cursor()
 
