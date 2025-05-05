@@ -127,14 +127,12 @@ def main() -> int:
 
     action_parser = subparsers.add_parser("action")
     action_parser.add_argument(
-        "-c",
         "--command",
         help="action command",
         required=True,
         type=str,
     )
     action_parser.add_argument(
-        "-n",
         "--name",
         help="action name",
         required=True,
@@ -143,7 +141,6 @@ def main() -> int:
 
     queue_parser = subparsers.add_parser("queue")
     queue_parser.add_argument(
-        "-i",
         "--action-id",
         help="action id",
         required=True,
