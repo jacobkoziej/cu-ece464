@@ -101,7 +101,7 @@ class Database:
         self,
         uid: int,
         job_id: Optional[int] = None,
-    ) -> Optional[int]:
+    ) -> Optional[tuple[int, int]]:
         states = self.job_states()
 
         cursor = self.connection.cursor()
@@ -122,18 +122,20 @@ class Database:
             "owner": uid,
             "start_time": time_ns(),
             "state": states["RUNNING"],
+            "previous_state": states["PENDING"],
         }
 
-        cursor.execute(
+        action_id = cursor.execute(
             "UPDATE jobs "
             "SET owner = :owner, start_time = :start_time, state = :state "
-            "WHERE id = :id",
+            "WHERE id = :id AND state = :previous_state "
+            "RETURNING action",
             parameters,
-        )
+        ).fetchone()[0]
 
         self.connection.commit()
 
-        return job_id
+        return job_id, action_id
 
     def pend_job(self, action_id: int) -> Optional[int]:
         if not self.action_id_valid(action_id):
