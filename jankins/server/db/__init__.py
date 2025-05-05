@@ -59,6 +59,20 @@ class Database:
 
         return active
 
+    def action_id_to_command(self, action_id: int) -> Optional[str]:
+        if not self.action_id_valid(action_id):
+            return None
+
+        cursor = self.connection.cursor()
+
+        result = cursor.execute(
+            "SELECT command FROM actions WHERE id = ?", (action_id,)
+        ).fetchone()[0]
+
+        self.connection.commit()
+
+        return result
+
     def add_action(self, action: Action) -> int:
         cursor = self.connection.cursor()
 
