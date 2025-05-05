@@ -12,16 +12,20 @@ from argparse import (
     ArgumentParser,
     Namespace,
 )
+from concurrent.futures import ThreadPoolExecutor
 from importlib import import_module
 from pathlib import Path
+from typing import Optional
 
 from loguru import logger
 from platformdirs import user_config_dir
+from pydantic import BaseModel
 
 from .. import message
 from ..message import (
     Action,
     Authenticate,
+    JobStart,
     Queue,
 )
 from ..serial import (
@@ -29,23 +33,34 @@ from ..serial import (
     tx,
 )
 from .config import Config
+from .work import handle_job
 
 
-def _action(args: Namespace, config: Config) -> int:
+def _action(args: Namespace, config: Config) -> BaseModel:
     return _generic(args, config)
 
 
-def _generic(args: Namespace, config: Config) -> int:
+def _generic(
+    args: Namespace,
+    config: Config,
+    model: Optional[str] = None,
+    out: Optional[BaseModel] = None,
+) -> BaseModel:
+    if model is None:
+        model = args.sub_command.capitalize()
+
     sock = _config2sock(config)
 
     logger.debug(f"connecting to {sock.getpeername()}")
 
-    auth = _config2auth(config)
+    auth = _config2Auth(config)
 
     logger.debug(f"authenticating as: {auth.username}")
 
     module = import_module(__name__)
-    out = getattr(module, f"_args2{args.sub_command}")(args)
+
+    if out is None:
+        out = getattr(module, f"_args2{model}")(args)
 
     tx(sock, [auth, out])
     sock.shutdown(socket.SHUT_WR)
@@ -59,7 +74,7 @@ def _generic(args: Namespace, config: Config) -> int:
 
     response = msgs.popleft()
 
-    dtype = getattr(message, f"{args.sub_command.capitalize()}Response")
+    dtype = getattr(message, f"{model}Response")
 
     if not isinstance(response, dtype):
         logger.error("got incorrect respone")
@@ -74,14 +89,18 @@ def _generic(args: Namespace, config: Config) -> int:
 
     sock.close()
 
-    return int(not response.error)
+    return response
 
 
-def _args2action(args: Namespace) -> Action:
+def _args2Action(args: Namespace) -> Action:
     return Action(name=args.name, command=args.command)
 
 
-def _args2queue(args: Namespace) -> Action:
+def _args2JobStart(args: Namespace) -> JobStart:
+    return JobStart(job_id=args.job_id)
+
+
+def _args2Queue(args: Namespace) -> Action:
     return Queue(action_id=args.action_id)
 
 
@@ -89,16 +108,28 @@ def _config2sock(config: Config) -> socket.socket:
     return socket.create_connection((config.hostname, config.port))
 
 
-def _config2auth(config: Config) -> Authenticate:
+def _config2Auth(config: Config) -> Authenticate:
     return Authenticate(username=config.username, passwd=config.passwd)
 
 
-def _config2queue(config: Config) -> Queue:
-    return Queue(action_id=config.action_id)
-
-
-def _queue(args: Namespace, config: Config) -> int:
+def _queue(args: Namespace, config: Config) -> BaseModel:
     return _generic(args, config)
+
+
+def _work(args: Namespace, config: Config) -> BaseModel:
+    response = _generic(args, config, model="JobStart")
+
+    if response is None or response.error:
+        return response
+
+    args.job_id = response.job_id
+
+    with ThreadPoolExecutor() as executor:
+        future = executor.submit(handle_job, response)
+
+        out = future.result(timeout=None)
+
+    return _generic(args, config, model="JobEnd", out=out)
 
 
 def main() -> int:
@@ -147,6 +178,13 @@ def main() -> int:
         type=int,
     )
 
+    work_parser = subparsers.add_parser("work")
+    work_parser.add_argument(
+        "--job-id",
+        help="job id",
+        type=int,
+    )
+
     args = parser.parse_args()
 
     logger.remove()
@@ -168,7 +206,12 @@ def main() -> int:
     module = import_module(__name__)
     sub_command = getattr(module, f"_{args.sub_command}")
 
-    return sub_command(args, config)
+    response = sub_command(args, config)
+
+    if response is None:
+        return 1
+
+    return 1 if response.error else 0
 
 
 if __name__ == "__main__":
