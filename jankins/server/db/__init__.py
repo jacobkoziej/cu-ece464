@@ -7,6 +7,7 @@ import importlib.resources
 import sqlite3
 
 from os import PathLike
+from time import time_ns
 from typing import Optional
 
 from ...message import (
@@ -95,6 +96,44 @@ class Database:
         self.connection.commit()
 
         return states
+
+    def delegate_job(
+        self,
+        uid: int,
+        job_id: Optional[int] = None,
+    ) -> Optional[int]:
+        states = self.job_states()
+
+        cursor = self.connection.cursor()
+
+        if job_id is None:
+            job_id = cursor.execute(
+                "SELECT id FROM jobs WHERE state = ?",
+                (states["PENDING"],),
+            ).fetchone()
+
+            if not job_id:
+                return None
+
+            job_id = job_id[0]
+
+        parameters = {
+            "id": job_id,
+            "owner": uid,
+            "start_time": time_ns(),
+            "state": states["RUNNING"],
+        }
+
+        cursor.execute(
+            "UPDATE jobs "
+            "SET owner = :owner, start_time = :start_time, state = :state "
+            "WHERE id = :id",
+            parameters,
+        )
+
+        self.connection.commit()
+
+        return job_id
 
     def pend_job(self, action_id: int) -> Optional[int]:
         if not self.action_id_valid(action_id):
