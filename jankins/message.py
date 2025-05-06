@@ -55,3 +55,12 @@ class Queue(BaseModel):
 class QueueResponse(BaseModel):
     job_id: Optional[int] = None
     error: Optional[str] = None
+
+
+class Stat(BaseModel):
+    state: str
+
+
+class StatResponse(BaseModel):
+    stats: Optional[str] = None
+    error: Optional[str] = None

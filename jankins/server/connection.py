@@ -3,6 +3,7 @@
 # connection.py -- connection handler
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
 
+import json
 import socket
 
 from socketserver import (
@@ -25,6 +26,8 @@ from ..message import (
     JobStartResponse,
     Queue,
     QueueResponse,
+    Stat,
+    StatResponse,
 )
 from ..serial import (
     rx,
@@ -120,6 +123,25 @@ class Handler(BaseRequestHandler):
             response.error = "failed to queue action"
 
             logger.error(f"{response.error}: {queue.action_id}")
+
+        finally:
+            tx(self.request, [response])
+
+    def _handle_Stat(self, uid: int, stat: Stat) -> None:
+        response = StatResponse()
+
+        try:
+            jobs = self.db.jobs_with_state(stat.state)
+            jobs = self.db.pretty_print_jobs(jobs)
+
+            response.stats = f"\n{json.dumps(jobs, indent=4)}"
+
+            logger.success(f"got stat for state: {stat.state}")
+
+        except Exception:
+            response.error = "failed to get stat for state"
+
+            logger.error(f"{response.error}: {stat.state}")
 
         finally:
             tx(self.request, [response])
