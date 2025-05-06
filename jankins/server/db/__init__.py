@@ -117,12 +117,13 @@ class Database:
             "id": job_id,
             "end_time": time_ns(),
             "state": states["COMPLETE"],
+            "exit_code": exit_code,
         }
 
         try:
             cursor.execute(
                 "UPDATE jobs "
-                "SET end_time = :end_time, state = :state "
+                "SET end_time = :end_time, state = :state, exit_code = :exit_code "
                 "WHERE id = :id",
                 parameters,
             )
