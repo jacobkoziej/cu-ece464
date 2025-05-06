@@ -262,3 +262,26 @@ class Database:
         ]
 
         return jobs
+
+    def update_heartbeat(self, job_id: int) -> bool:
+        states = self.job_states()
+
+        cursor = self.connection.cursor()
+
+        parameters = {
+            "job_id": job_id,
+            "time": time_ns(),
+            "state": states["RUNNING"],
+        }
+
+        id = cursor.execute(
+            "UPDATE jobs "
+            "SET heartbeat_time = :time "
+            "WHERE heartbeat_time + 1000000000 >= :time AND id = :job_id AND state = :state "
+            "RETURNING id",
+            parameters,
+        ).fetchone()
+
+        self.connection.commit()
+
+        return bool(id)
