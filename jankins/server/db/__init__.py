@@ -6,6 +6,10 @@
 import importlib.resources
 import sqlite3
 
+from datetime import (
+    UTC,
+    datetime,
+)
 from os import PathLike
 from time import time_ns
 from typing import Optional
@@ -218,3 +222,41 @@ class Database:
         self.connection.commit()
 
         return id
+
+    def pretty_print_jobs(self, jobs: list[int]) -> Optional[list[dict]]:
+        cursor = self.connection.cursor()
+
+        def in_tuple(count: int) -> str:
+            return "(" + ", ".join(["?"] * count) + ")"
+
+        result = cursor.execute(
+            "SELECT j.id, a.command, u.username, j.start_time, j.end_time, j.exit_code "
+            "FROM actions as a, jobs as j, users as u "
+            f"WHERE u.id = j.owner AND a.id = j.action AND j.id IN {in_tuple(len(jobs))}",
+            jobs,
+        ).fetchall()
+
+        self.connection.commit()
+
+        def pprint_time(unix_time_ns: Optional[int]) -> Optional[str]:
+            if unix_time_ns is None:
+                return None
+
+            return (
+                datetime.fromtimestamp(unix_time_ns / 1e9, UTC).isoformat()
+                + "Z"
+            )
+
+        jobs = [
+            {
+                "id": r[0],
+                "action": r[1],
+                "owner": r[2],
+                "start_time": pprint_time(r[3]),
+                "end_time": pprint_time(r[4]),
+                "exit_code": r[5],
+            }
+            for r in result
+        ]
+
+        return jobs
