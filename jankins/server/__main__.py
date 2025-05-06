@@ -84,6 +84,9 @@ def main() -> None:
 
             while True:
                 server_thread.join(timeout=10)
+
+                logger.debug("pruning timed-out running jobs")
+
                 db.timeout_running()
 
             logger.critical("server thread exited unexpectedly")
