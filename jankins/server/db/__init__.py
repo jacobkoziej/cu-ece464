@@ -232,9 +232,9 @@ class Database:
             return "(" + ", ".join(["?"] * count) + ")"
 
         result = cursor.execute(
-            "SELECT j.id, a.command, u.username, j.start_time, j.end_time, j.exit_code "
-            "FROM actions as a, jobs as j, users as u "
-            f"WHERE u.id = j.owner AND a.id = j.action AND j.id IN {in_tuple(len(jobs))}",
+            "SELECT j.id, a.command, j.start_time, j.end_time, j.exit_code "
+            "FROM actions as a, jobs as j "
+            f"WHERE a.id = j.action AND j.id IN {in_tuple(len(jobs))}",
             jobs,
         ).fetchall()
 
@@ -253,10 +253,9 @@ class Database:
             {
                 "id": r[0],
                 "action": r[1],
-                "owner": r[2],
-                "start_time": pprint_time(r[3]),
-                "end_time": pprint_time(r[4]),
-                "exit_code": r[5],
+                "start_time": pprint_time(r[2]),
+                "end_time": pprint_time(r[3]),
+                "exit_code": r[4],
             }
             for r in result
         ]
