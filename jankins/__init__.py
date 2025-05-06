@@ -9,8 +9,14 @@ from . import (
     serial,
     server,
 )
+from ._version import (
+    __version__,
+    __version_tuple__,
+)
 
 __all__ = [
+    "__version__",
+    "__version_tuple__",
     "client",
     "message",
     "serial",

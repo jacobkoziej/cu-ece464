@@ -1,5 +1,68 @@
+[build-system]
+requires = [
+  'hatch-vcs',
+  'hatchling',
+]
+build-backend = 'hatchling.build'
+
+[project]
+name = 'jankins'
+license = 'GPL-3.0-or-later'
+authors = [
+  {name = 'Jacob Koziej', email = 'jacobkoziej@gmail.com'},
+]
+requires-python = '>= 3.12'
+dependencies = [
+  'loguru',
+  'msgpack',
+  'platformdirs',
+  'pydantic',
+  'pyyaml',
+]
+dynamic = [
+  'version',
+]
+
+[project.scripts]
+jankins-client = 'jankins.client.__main__:main'
+jankins-server = 'jankins.server.__main__:main'
+
+[project.urls]
+Repository = 'https://github.com/jacobkoziej/cu-ece464'
+
 [tool.black]
 line-length = 79
+
+[tool.hatch.build]
+artifacts = [
+  'jankins/_version.py',
+]
+exclude = [
+  'jankins/.gitignore',
+  'jankins/write-up.md',
+  'jankins/server/db/synthetic.sql',
+]
+
+[tool.hatch.build.hooks.vcs]
+version-file = 'jankins/_version.py'
+
+[tool.hatch.build.targets.sdist]
+include = [
+  'jankins/*.py',
+]
+exclude = [
+  'jankins/.gitignore',
+  'jankins/server/db/synthetic.sql',
+  'jankins/write-up.md',
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  'jankins',
+]
+
+[tool.hatch.version]
+source = 'vcs'
 
 [tool.ruff]
 line-length = 79

@@ -21,18 +21,30 @@
         inherit (pkgs) python3;
 
         python3-pkgs = python3.withPackages (
-          ps: with ps; [
+          python-pkgs:
+          let
+            jankins-dependencies =
+              let
+                inherit (lib) importTOML;
+                inherit (lib.attrsets) attrVals;
+
+                pyproject = importTOML ./pyproject.toml;
+
+                inherit (pyproject.project) dependencies;
+
+              in
+              attrVals dependencies python-pkgs;
+
+          in
+          with python-pkgs;
+          [
             beautifulsoup4
             ipython
-            loguru
-            msgpack
-            platformdirs
-            pydantic
             pytest
-            pyyaml
             requests
             sqlalchemy
           ]
+          ++ jankins-dependencies
         );
 
       in
