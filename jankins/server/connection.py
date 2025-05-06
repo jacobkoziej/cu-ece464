@@ -215,3 +215,4 @@ class Handler(BaseRequestHandler):
 
 class Server(ThreadingMixIn, TCPServer):
     allow_reuse_address = True
+    allow_reuse_port = True
