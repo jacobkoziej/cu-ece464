@@ -263,6 +263,26 @@ class Database:
 
         return jobs
 
+    def timeout_running(self) -> bool:
+        states = self.job_states()
+
+        cursor = self.connection.cursor()
+
+        parameters = {
+            "timeout": states["TIMEOUT"],
+            "time": time_ns(),
+            "running": states["RUNNING"],
+        }
+
+        cursor.execute(
+            "UPDATE jobs "
+            "SET state = :timeout "
+            "WHERE heartbeat_time + 1000000000 < :time AND state = :running",
+            parameters,
+        )
+
+        self.connection.commit()
+
     def update_heartbeat(self, job_id: int) -> bool:
         states = self.job_states()
 
