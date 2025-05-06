@@ -50,7 +50,7 @@ def _generic(
     model: Optional[str] = None,
     out: Optional[BaseModel] = None,
     success: bool = True,
-) -> BaseModel:
+) -> Optional[BaseModel]:
     if model is None:
         model = args.sub_command.capitalize()
 
@@ -75,7 +75,7 @@ def _generic(
     if not msgs:
         logger.error("got no response from server")
         sock.close()
-        return 1
+        return None
 
     response = msgs.popleft()
 
@@ -84,7 +84,7 @@ def _generic(
     if not isinstance(response, dtype):
         logger.error("got incorrect respone")
         sock.close()
-        return 1
+        return None
 
     if response.error:
         logger.error(response.error)
@@ -158,7 +158,7 @@ def _work(args: Namespace, config: Config) -> BaseModel:
 
             response = _generic(args, config, model="Heartbeat", success=False)
 
-            if not response.success or response.error:
+            if response is None or not response.success or response.error:
                 # dirty way to get around running futures
                 os.kill(os.getpid(), signal.SIGKILL)
 
