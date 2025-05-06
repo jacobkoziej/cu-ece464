@@ -196,7 +196,6 @@ def main() -> int:
     stat_parser.add_argument(
         "--state",
         choices=[
-            "CANCELED",
             "COMPLETE",
             "PENDING",
             "RUNNING",

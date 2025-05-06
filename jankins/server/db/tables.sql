@@ -27,7 +27,6 @@ DELETE FROM
 INSERT INTO
     job_state(name)
 VALUES
-    ('CANCELED'),
     ('COMPLETE'),
     ('PENDING'),
     ('RUNNING'),
