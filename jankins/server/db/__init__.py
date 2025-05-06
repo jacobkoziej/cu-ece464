@@ -142,6 +142,26 @@ class Database:
 
         return states
 
+    def jobs_with_state(self, state: str) -> Optional[list[int]]:
+        states = self.job_states()
+
+        state = states.get(state)
+
+        if state is None:
+            return None
+
+        cursor = self.connection.cursor()
+
+        result = cursor.execute(
+            "SELECT id FROM jobs WHERE state = ?", (state,)
+        )
+
+        jobs = [r[0] for r in result.fetchall()]
+
+        self.connection.commit()
+
+        return jobs
+
     def delegate_job(
         self,
         uid: int,
