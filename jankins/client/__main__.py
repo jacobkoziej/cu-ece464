@@ -27,6 +27,7 @@ from ..message import (
     Authenticate,
     JobStart,
     Queue,
+    Stat,
 )
 from ..serial import (
     rx,
@@ -45,6 +46,7 @@ def _generic(
     config: Config,
     model: Optional[str] = None,
     out: Optional[BaseModel] = None,
+    success: bool = True,
 ) -> BaseModel:
     if model is None:
         model = args.sub_command.capitalize()
@@ -85,7 +87,8 @@ def _generic(
         logger.error(response.error)
 
     else:
-        logger.success(f"transaction complete: {response}")
+        if success:
+            logger.success(f"transaction complete: {response}")
 
     sock.close()
 
@@ -104,6 +107,10 @@ def _args2Queue(args: Namespace) -> Action:
     return Queue(action_id=args.action_id)
 
 
+def _args2Stat(args: Namespace) -> Stat:
+    return Stat(state=args.state)
+
+
 def _config2sock(config: Config) -> socket.socket:
     return socket.create_connection((config.hostname, config.port))
 
@@ -114,6 +121,13 @@ def _config2Auth(config: Config) -> Authenticate:
 
 def _queue(args: Namespace, config: Config) -> BaseModel:
     return _generic(args, config)
+
+
+def _stat(args: Namespace, config: Config) -> BaseModel:
+    response = _generic(args, config, success=False)
+
+    if not response.error:
+        logger.success(response.stats)
 
 
 def _work(args: Namespace, config: Config) -> BaseModel:
@@ -176,6 +190,21 @@ def main() -> int:
         help="action id",
         required=True,
         type=int,
+    )
+
+    stat_parser = subparsers.add_parser("stat")
+    stat_parser.add_argument(
+        "--state",
+        choices=[
+            "CANCELED",
+            "COMPLETE",
+            "PENDING",
+            "RUNNING",
+            "TIMEOUT",
+        ],
+        default="PENDING",
+        help="state",
+        type=str,
     )
 
     work_parser = subparsers.add_parser("work")
