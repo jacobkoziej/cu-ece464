@@ -68,8 +68,7 @@ def main() -> None:
 
     logger.info(f"using database at `{database_path.resolve()}`")
 
-    # create tables if they don't exist
-    _ = Database(database_path, create_tables=True)
+    db = Database(database_path, create_tables=True)
 
     logger.info(f"starting server on port {config.port}")
 
@@ -83,7 +82,10 @@ def main() -> None:
                 f"server thread started with id {server_thread.ident}"
             )
 
-            server_thread.join()
+            while True:
+                server_thread.join(timeout=10)
+                db.timeout_running()
+
             logger.critical("server thread exited unexpectedly")
 
         except KeyboardInterrupt:
