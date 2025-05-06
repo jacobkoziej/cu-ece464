@@ -3,6 +3,8 @@
 # __main__.py -- main
 # Copyright (C) 2025  Jacob Koziej <jacobkoziej@gmail.com>
 
+import os
+import signal
 import socket
 import sys
 
@@ -25,6 +27,7 @@ from .. import message
 from ..message import (
     Action,
     Authenticate,
+    Heartbeat,
     JobStart,
     Queue,
     Stat,
@@ -99,6 +102,10 @@ def _args2Action(args: Namespace) -> Action:
     return Action(name=args.name, command=args.command)
 
 
+def _args2Heartbeat(args: Namespace) -> Heartbeat:
+    return Heartbeat(job_id=args.job_id)
+
+
 def _args2JobStart(args: Namespace) -> JobStart:
     return JobStart(job_id=args.job_id)
 
@@ -141,7 +148,19 @@ def _work(args: Namespace, config: Config) -> BaseModel:
     with ThreadPoolExecutor() as executor:
         future = executor.submit(handle_job, response)
 
-        out = future.result(timeout=None)
+        while True:
+            try:
+                out = future.result(timeout=0.5)
+                break
+
+            except TimeoutError:
+                pass
+
+            response = _generic(args, config, model="Heartbeat", success=False)
+
+            if not response.success or response.error:
+                # dirty way to get around running futures
+                os.kill(os.getpid(), signal.SIGKILL)
 
     return _generic(args, config, model="JobEnd", out=out)
 

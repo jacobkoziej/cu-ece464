@@ -27,6 +27,15 @@ class GenericFailure(BaseModel):
     reason: Optional[str] = None
 
 
+class Heartbeat(BaseModel):
+    job_id: int
+
+
+class HeartbeatResponse(BaseModel):
+    success: Optional[bool] = None
+    error: Optional[str] = None
+
+
 class JobEnd(BaseModel):
     job_id: int
     return_code: int

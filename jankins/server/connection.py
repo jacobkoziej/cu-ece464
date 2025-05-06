@@ -20,6 +20,8 @@ from ..message import (
     ActionResponse,
     Authenticate,
     GenericFailure,
+    Heartbeat,
+    HeartbeatResponse,
     JobEnd,
     JobEndResponse,
     JobStart,
@@ -62,6 +64,25 @@ class Handler(BaseRequestHandler):
             response.error = f"failed to add action: {action.name}"
 
             logger.error(response.error)
+
+        finally:
+            tx(self.request, [response])
+
+    def _handle_Heartbeat(self, uid: int, heartbeat: Heartbeat) -> None:
+        response = HeartbeatResponse()
+
+        try:
+            response.success = self.db.update_heartbeat(heartbeat.job_id)
+
+            if not response.success:
+                raise Exception
+
+            logger.success(f"updated heartbeat for job: {heartbeat.job_id}")
+
+        except Exception:
+            response.error = "failed to update heartbeat"
+
+            logger.error(f"{response.error} for job: {heartbeat.job_id}")
 
         finally:
             tx(self.request, [response])
