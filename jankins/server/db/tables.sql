@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS jobs(
     state INTEGER NOT NULL,
     start_time INTEGER,
     end_time INTEGER,
+    heartbeat_time INTEGER,
     exit_code INTEGER,
     FOREIGN KEY(ACTION) REFERENCES actions(id),
     FOREIGN KEY(owner) REFERENCES users(id),

@@ -191,13 +191,14 @@ class Database:
             "id": job_id,
             "owner": uid,
             "start_time": time_ns(),
+            "heartbeat_time": time_ns(),
             "state": states["RUNNING"],
             "previous_state": states["PENDING"],
         }
 
         action_id = cursor.execute(
             "UPDATE jobs "
-            "SET owner = :owner, start_time = :start_time, state = :state "
+            "SET owner = :owner, start_time = :start_time, heartbeat_time = :heartbeat_time, state = :state "
             "WHERE id = :id AND state = :previous_state "
             "RETURNING action",
             parameters,
