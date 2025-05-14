@@ -1,6 +1,6 @@
 # write-up
 
-For my final project I've decided to implement a jank version of
+For my final project I've decided to implement a janky version of
 Jenkins, hence jankins. That said, jankins implements the bare minimum
 of what I consider acceptable for such software: basic authentication,
 action definitions, job history, artifact storage, support for queuing
