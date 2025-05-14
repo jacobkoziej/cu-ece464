@@ -37,18 +37,18 @@ server to, a path for user data storage, and a default buffer size for
 received data. All values have defaults, but can optionally be
 overwritten on server startup.
 
-The database itself has four primary tables: users, actions, job states,
-and jobs. The users table stores usernames and passwords along with a
-unique user id. The actions table keeps track of commands that can be
-executed for jobs. Each action has a name, a unique id, and a field
-indicating that the action is active or disabled. The job states table
-acts as an enumeration of different job states to avoid having to store
-tons of strings in the job table. Finally, the jobs table has a unique
-entry for each job keeping track of the user that worked on the job, the
-action associated to the job, state, when the job was started and ended,
-the exit code of the completed process on the client, as well as a
-hidden column used to keep track of worker heartbeats to allow for jobs
-to be timed-out.
+The database itself has [four primary tables]: users, actions, job
+states, and jobs. The users table stores usernames and passwords along
+with a unique user id. The actions table keeps track of commands that
+can be executed for jobs. Each action has a name, a unique id, and a
+field indicating that the action is active or disabled. The job states
+table acts as an enumeration of different job states to avoid having to
+store tons of strings in the job table. Finally, the jobs table has a
+unique entry for each job keeping track of the user that worked on the
+job, the action associated to the job, state, when the job was started
+and ended, the exit code of the completed process on the client, as well
+as a hidden column used to keep track of worker heartbeats to allow for
+jobs to be timed-out.
 
 That leaves us with stored artifacts. Since each job has a unique id,
 all completed jobs have their artifacts written on disk as a zip file
@@ -99,7 +99,7 @@ protocol from scratch to make sure both processes could be in agreement.
 To get around this I decided to utilize [MessagePack], a more efficient
 binary version of JSON. I found this beneficial to creating something
 like a REST API as it required far less overhead to implement, and with
-a recursive decoder and encoder, made the socket communication seem
+a [recursive decoder and encoder], made the socket communication seem
 transparent as Python objects would be rebuilt on the server and client.
 
 Once I had a protocol settled on, I also had to figure out how to best
@@ -142,4 +142,6 @@ That said, I am overall happy with the outcome of this project as I've
 become far more comfortable with SQL, database design, and now have an
 idea of how to program with sockets to allow for easy IPC.
 
+[four primary tables]: server/db/tables.sql
 [messagepack]: https://msgpack.org/index.html
+[recursive decoder and encoder]: serial.py
