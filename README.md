@@ -56,8 +56,10 @@ port: 4640
 recieve_bufsize: 1024
 ```
 
-> [!TIP] You can populate the server's database with synthetic data by
-> feeding in a SQL script available in the repository:
+> [!TIP]
+>
+> You can populate the server's database with synthetic data by feeding
+> in a SQL script available in the repository:
 >
 > ```
 > $ sqlite3 path/to/database.sqlite < jankins/server/db/synthetic.sql
