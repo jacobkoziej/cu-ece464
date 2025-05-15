@@ -63,6 +63,50 @@ recieve_bufsize: 1024
 > $ sqlite3 path/to/database.sqlite < jankins/server/db/synthetic.sql
 > ```
 
+## Running the Client
+
+The client behaves much like `git` where you must specify a sub-command
+to perform a useful application.
+
+Adding a new action:
+
+```
+$ jankins-client action --name hello_world --command 'echo hello world'
+```
+
+Queuing up an action:
+
+```
+$ jankins-client queue --action-id ACTION_ID
+```
+
+Running a job:
+
+```
+$ jankins-client work
+```
+
+Running a job with a specific ID:
+
+```
+$ jankins-client work --job-id JOB_ID
+```
+
+Get pending jobs:
+
+```
+$ jankins-client stat
+```
+
+Get completed jobs:
+
+```
+$ jankins-client stat --state COMPLETE
+```
+
+There are more options so feel free to explore these using the `--help`
+flag for each command/sub-command.
+
 ## Copyright & Licensing
 
 Copyright (C) 2025 Jacob Koziej [`<jacobkoziej@gmail.com>`]
