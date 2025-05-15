@@ -37,6 +37,32 @@ port: 4640
 Or optionally pass a configuration file to the client using the
 `--config` flag.
 
+## Running the Server
+
+You can start the server by running `jankins-server`.
+
+On startup, the server takes care of creating a database with empty
+tables if they do not exist. By default this is under
+`~/.local/share/jankins/database.sqlite`, however this can be changed by
+specifying a configuration file withe the `--config` file.
+
+The following configuration options are application defaults:
+
+```yaml
+---
+
+user_data_path: null # defaults to ~/.local/share/jankins on UNIX
+port: 4640
+recieve_bufsize: 1024
+```
+
+> [!TIP] You can populate the server's database with synthetic data by
+> feeding in a SQL script available in the repository:
+>
+> ```
+> $ sqlite3 path/to/database.sqlite < jankins/server/db/synthetic.sql
+> ```
+
 ## Copyright & Licensing
 
 Copyright (C) 2025 Jacob Koziej [`<jacobkoziej@gmail.com>`]
